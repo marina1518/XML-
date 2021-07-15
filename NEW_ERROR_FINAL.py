@@ -265,3 +265,160 @@ def consistency(import_url): #has import url attribute
         #NODES_LIST=NODES_LIST.remove(NODES_LIST[-1])
     return NODES_LIST,ERROR_BACKSLASH,ERROR_NAME,ERROR_MISSING,INDEX_NAME,INDEX_BACKSLASH,INDEX_MISSING,NAME_LIST
 
+def show_file(consistency):
+    mydata = ''
+    FLAG_ERROR = False
+    NODES_LIST,ERROR_BACKSLASH,ERROR_NAME,ERROR_MISSING,INDEX_NAME,INDEX_BACKSLASH,INDEX_MISSING,NAME_LIST = consistency
+    root = NODES_LIST[0][0].ht
+    MARKED_LIST = [0] * len(NODES_LIST)
+    print(NODES_LIST,"show")
+    #if last_item_error==True:
+        #node_it=len(NODES_LIST)-1
+    #else:
+        #node_it=len(NODES_LIST)
+
+    def print_xml(x, please, counter):
+        ###### problem more one example
+        tharwota=counter
+
+        for i in range(0, len(NODES_LIST)):
+            FLAG_ERROR=False
+            if NODES_LIST[i][0].ht == x and MARKED_LIST[i] == 0:
+                index = i
+
+                if NODES_LIST[i][1] == 's':
+                    mydata = please + '<' + NODES_LIST[i][0].ht + '/>' + '\n'
+                    print('<' + NODES_LIST[i][0].ht + '/>')
+
+                elif NODES_LIST[i][1] == 'c':
+                    tharwota+=1
+                    mydata = please + '<!--' + NODES_LIST[i][0].ht + '-->' +" ------>open tag not found"+ '\n'
+                    print('<!--' + NODES_LIST[i][0].ht + '-->' +" ------>open tag not found" )
+
+
+                elif NODES_LIST[i][1] == 'h':
+                    mydata = please + '<' + NODES_LIST[i][0].ht + '>' + '\n'
+                    print('<' + NODES_LIST[i][0].ht + '>')
+
+
+
+                elif NODES_LIST[i][1] == 'n':
+                    mydata = please + '<' + NODES_LIST[i][0].ht + '>' + '\n'
+                    print('<' + NODES_LIST[i][0].ht + '>')
+
+                elif NODES_LIST[i][1] == 'v':
+                    mydata = please + NODES_LIST[i][0].ht + '\n'
+                    # print('new'+mydata)
+                    print(NODES_LIST[i][0].ht)
+                MARKED_LIST[i] = 1
+                break
+
+            else:
+                mydata = please + ''
+
+        for j in NODES_LIST[index][0].children:
+            new = j.ht
+
+            please, counter = print_xml(new, mydata, tharwota)
+            mydata = please
+            tharwota = counter
+
+        if NODES_LIST[i][1] == 'n':
+
+            if ('!' == NODES_LIST[i][0].ht[0] or '?' == NODES_LIST[i][0].ht[0] or NODES_LIST[i][0].ht[-1] == '/'):
+                pass
+
+
+            else:
+
+                if (NODES_LIST[i][0].ht in ERROR_BACKSLASH):
+
+                    for m in range(0, len(INDEX_BACKSLASH)):
+
+                        if NODES_LIST[i][0].ht == INDEX_BACKSLASH[m][0] and i == INDEX_BACKSLASH[m][1]:
+                            print(i)
+
+                            mydata = mydata + '</' + NODES_LIST[i][0].ht.split()[0] + '>' + "-----> BACKSLASH_ERROR" + '\n'
+
+                            print('</' + NODES_LIST[i][0].ht.split()[0] + '>', "-----> BACKSLASH_ERROR")
+
+                            tharwota += 1
+
+                            FLAG_ERROR = True
+
+                            break
+
+                if (NODES_LIST[i][0].ht in ERROR_NAME):
+
+                    for m in range(0, len(INDEX_NAME)):
+
+                        if NODES_LIST[i][0].ht == INDEX_NAME[m][0] and i == INDEX_NAME[m][1]:
+                            mydata = mydata + '</' + NODES_LIST[i][0].ht.split()[0] + '>' + "-----> WRONG_NAME_ERROR" + '\n'
+
+                            print('</' + NODES_LIST[i][0].ht.split()[0] + '>', "-----> WRONG_NAME_ERROR")
+
+                            tharwota += 1
+
+                            FLAG_ERROR = True
+
+                            break
+
+                if (NODES_LIST[i][0].ht in ERROR_MISSING):
+
+                    for h in range(0, len(INDEX_MISSING)):
+
+                        if NODES_LIST[i][0].ht == INDEX_MISSING[h][0] and i == INDEX_MISSING[h][1]:
+                            mydata = mydata + '</' + NODES_LIST[i][0].ht.split()[0] + '>' + "-----> MISSING_CLOSE_TAG_ERROR" + '\n'
+
+                            print('</' + NODES_LIST[i][0].ht.split()[0] + '>', "-----> MISSING_CLOSE_TAG_ERROR")
+
+                            tharwota += 1
+
+                            FLAG_ERROR = True
+
+                            break
+
+                if FLAG_ERROR == False:
+                    #print('why')
+
+                    mydata = mydata + '</' + NODES_LIST[i][0].ht.split()[0] + '>' + '\n'
+
+                    print('</' + NODES_LIST[i][0].ht.split()[0] + '>')
+
+        return mydata, tharwota
+
+
+    my, counter_error = print_xml(root, '', 0)
+    # saving file
+
+    print("error number", counter_error)
+    file2 = open('consistency.xml', 'w')
+    file2.write("ERROR NUMBER: "+str(counter_error)+'\n')
+    file2.write(my)
+    file2.close()
+
+    #write data_pretty
+
+    pretty_file(NODES_LIST)
+
+
+    #write minify
+    minify_operation()
+
+    #write compression
+    compress()
+
+    #write decompression
+    decompress(compress())
+
+    #wrie_jason
+    jason_function(NODES_LIST,NAME_LIST)
+
+
+    return counter_error
+
+def send_error(show_file):
+    counter_error=show_file
+    return counter_error
+
+#show_file(consistency(import_url()))
