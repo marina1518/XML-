@@ -45,6 +45,62 @@ class Main(QMainWindow,Ui_MainWindow):
 
         #self.original_button.clicked.connect(self.open_original)
 
+    def open_consistency(self):
+        self.show_file.setEnabled(True)
+
+
+    def open_button(self):
+        self.pretty_button.setEnabled(True)
+        self.minify_button.setEnabled(True)
+        self.compress_button.setEnabled(True)
+        self.decompress_button.setEnabled(True)
+        self.jason_button.setEnabled(True)
+
+    def import_file(self):
+        file_filter='Data File(*.xml)'
+
+        response = QFileDialog.getOpenFileNames(
+            parent=self,
+            caption='select a data file',
+            directory=os.getcwd(),
+            filter=file_filter,
+            initialFilter='Data File(*.xml)'
+        )
+        print(response[0])
+        word_url =str(response[0]).replace('[','')
+        word_url = word_url.replace(']', '')
+        word_url = word_url.replace("'", '')
+        self.lineEdit_2.setText(word_url)
+        #file_name = re.split('/', word_url)
+        #print(file_name[-1])
+        os.startfile(word_url)
+        return word_url
+
+
+    def print_error(self):
+        error=send_error(show_file(consistency(import_url(self.import_file()))))
+        if error==0:
+            error="zero"
+        self.lineEdit_1.setText(str(error))
+
+    def open_file_consistency(self):
+        os.startfile("consistency.xml")
+
+
+    def print_pretty(self):
+        os.startfile("pretty.xml")
+
+    def print_minify(self):
+        os.startfile("minify.xml")
+
+    def print_compress(self):
+        os.startfile("compressed.txt")
+
+    def print_decompress(self):
+        os.startfile("decompressed.txt")
+
+    def print_jason(self):
+        os.startfile("jason.json")
 
 
 def main():
