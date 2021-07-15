@@ -21,8 +21,8 @@ def pretty_file(NODES_LIST):
 
                 elif NODES_LIST[i][1] == 'c':
                     spaces = ' ' * level
-                    data_pretty = begin_data + spaces + '<!--' + NODES_LIST[i][0].ht + '-->' + '\n'
-                    print('<!--' + NODES_LIST[i][0].ht + '-->')
+                    data_pretty = begin_data + spaces + '<' + NODES_LIST[i][0].ht + '>' + '\n'
+                    print('<' + NODES_LIST[i][0].ht + '>')
 
 
                 elif NODES_LIST[i][1] == 'n':
